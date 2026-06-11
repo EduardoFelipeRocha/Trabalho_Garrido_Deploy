@@ -266,7 +266,7 @@ Passos resumidos:
 Link de acesso publicado:
 
 ```text
-preencher apos deploy
+https://cidade-cuida-gateway.onrender.com
 ```
 
 Mais detalhes em:
@@ -278,7 +278,7 @@ docs/DEPLOY.md
 Se o frontend abrir com "API parcial" ou "API com erro", acesse:
 
 ```text
-https://URL-DO-GATEWAY/diagnostics
+https://cidade-cuida-gateway.onrender.com/diagnostics
 ```
 
 Essa rota mostra se o erro esta no `catalog`, `orders` ou `notifications`.
