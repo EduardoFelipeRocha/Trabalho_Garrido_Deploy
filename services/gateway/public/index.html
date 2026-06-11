@@ -52,41 +52,43 @@
         <p class="feedback" id="formFeedback" role="status"></p>
       </section>
 
-      <section class="panel metrics-panel" aria-label="Indicadores">
-        <div class="metric">
-          <span id="ticketCount">0</span>
-          <p>chamados</p>
-        </div>
-        <div class="metric">
-          <span id="criticalCount">0</span>
-          <p>prioridade alta</p>
-        </div>
-        <div class="metric">
-          <span id="notificationCount">0</span>
-          <p>notificacoes</p>
-        </div>
-      </section>
-
-      <section class="panel" aria-labelledby="ticketsTitle">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Fila de atendimento</p>
-            <h2 id="ticketsTitle">Chamados registrados</h2>
+      <div class="workspace">
+        <section class="panel metrics-panel" aria-label="Indicadores">
+          <div class="metric">
+            <span id="ticketCount">0</span>
+            <p>chamados</p>
           </div>
-          <button class="secondary" id="refreshButton" type="button">Atualizar</button>
-        </div>
-        <div class="list" id="ticketList"></div>
-      </section>
-
-      <section class="panel" aria-labelledby="notificationsTitle">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Eventos</p>
-            <h2 id="notificationsTitle">Notificacoes</h2>
+          <div class="metric">
+            <span id="criticalCount">0</span>
+            <p>prioridade alta</p>
           </div>
-        </div>
-        <div class="list compact" id="notificationList"></div>
-      </section>
+          <div class="metric">
+            <span id="notificationCount">0</span>
+            <p>notificacoes</p>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="ticketsTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Fila de atendimento</p>
+              <h2 id="ticketsTitle">Chamados registrados</h2>
+            </div>
+            <button class="secondary" id="refreshButton" type="button">Atualizar</button>
+          </div>
+          <div class="list" id="ticketList"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="notificationsTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Eventos</p>
+              <h2 id="notificationsTitle">Notificacoes</h2>
+            </div>
+          </div>
+          <div class="list compact" id="notificationList"></div>
+        </section>
+      </div>
     </main>
 
     <script src="/assets/app.js"></script>

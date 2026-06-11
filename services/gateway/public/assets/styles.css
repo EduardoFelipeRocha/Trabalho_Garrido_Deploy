@@ -92,8 +92,13 @@ h2 {
 }
 
 .form-panel {
-  position: sticky;
-  top: 18px;
+  align-self: start;
+}
+
+.workspace {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
 }
 
 .section-heading {
@@ -306,7 +311,6 @@ button.secondary:hover {
 
   .form-panel {
     grid-row: auto;
-    position: static;
   }
 }
 
