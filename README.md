@@ -24,7 +24,7 @@ A proposta deste sistema e centralizar o registro dos chamados e calcular uma pr
 | `notifications` | `3003` | Recebe evento de chamado criado e registra uma notificacao. |
 | `gateway` | `3000` | API de entrada; orquestra catalogo e chamados para o cliente externo. |
 
-O `gateway` tambem entrega o frontend web em `/`, permitindo registrar chamados e acompanhar os dados pelo navegador.
+O `gateway` tambem entrega o frontend web em `/`, permitindo registrar chamados e acompanhar os dados pelo navegador. Para manter a demonstracao funcionando no deploy, ele possui fallback de leitura de categorias e criacao de chamados caso algum microsservico interno esteja temporariamente indisponivel.
 
 Fluxo principal:
 
@@ -101,7 +101,7 @@ Tabelas criadas:
 
 Para teste rapido, se `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` nao forem configuradas, os servicos usam repositorios em memoria.
 
-O gateway tambem possui categorias padrao como fallback para manter a interface utilizavel caso o servico `catalog` esteja temporariamente indisponivel no deploy.
+O gateway tambem possui categorias padrao como fallback para manter a interface utilizavel caso o servico `catalog` esteja temporariamente indisponivel no deploy. Se `orders` estiver indisponivel, o gateway tenta criar o chamado diretamente usando a mesma regra de negocio e o mesmo Supabase/Postgres.
 
 ## Executando localmente
 
@@ -145,6 +145,8 @@ Terminal 4:
 $env:CATALOG_URL="http://localhost:3001"
 $env:ORDERS_URL="http://localhost:3002"
 $env:NOTIFICATIONS_URL="http://localhost:3003"
+$env:SUPABASE_URL="https://SEU-PROJETO.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY="SUA_SERVICE_ROLE_KEY"
 npm run start:gateway
 ```
 

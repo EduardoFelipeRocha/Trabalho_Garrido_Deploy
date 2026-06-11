@@ -20,6 +20,11 @@ describe("GatewayFacade", () => {
       },
       notificationClient: {
         findAll: async () => []
+      },
+      fallbackCreateTicket: {
+        execute: async () => {
+          throw new Error("Fallback should not be called.");
+        }
       }
     });
 

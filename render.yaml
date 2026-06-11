@@ -40,6 +40,10 @@ services:
     plan: free
     dockerfilePath: ./services/gateway/Dockerfile
     envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
       - key: CATALOG_URL
         fromService:
           type: web

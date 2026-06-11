@@ -1,15 +1,37 @@
 import http from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
+import { CreateTicketUseCase } from "../../../orders/src/application/create-ticket-use-case.js";
+import { SeverityPriorityStrategy } from "../../../orders/src/domain/severity-priority-strategy.js";
+import { TicketFactory } from "../../../orders/src/domain/ticket-factory.js";
+import { HttpEventPublisher } from "../../../orders/src/infrastructure/http-event-publisher.js";
+import { InMemoryTicketRepository } from "../../../orders/src/infrastructure/in-memory-ticket-repository.js";
+import { SupabaseTicketRepository } from "../../../orders/src/infrastructure/supabase-ticket-repository.js";
+import { UuidIdGenerator } from "../../../orders/src/infrastructure/uuid-id-generator.js";
+import { SupabaseRestClient } from "../../../shared/supabase-rest-client.js";
 import { GatewayFacade } from "../application/gateway-facade.js";
 import { HttpCategoryClient } from "../infrastructure/http-category-client.js";
 import { HttpNotificationClient } from "../infrastructure/http-notification-client.js";
 import { HttpTicketClient } from "../infrastructure/http-ticket-client.js";
 
+const supabaseClient = new SupabaseRestClient({
+  url: process.env.SUPABASE_URL,
+  serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY
+});
+const fallbackTicketRepository = supabaseClient.enabled
+  ? new SupabaseTicketRepository(supabaseClient)
+  : new InMemoryTicketRepository();
+const fallbackCreateTicket = new CreateTicketUseCase({
+  ticketRepository: fallbackTicketRepository,
+  ticketFactory: new TicketFactory(new UuidIdGenerator()),
+  priorityStrategy: new SeverityPriorityStrategy(),
+  eventPublisher: new HttpEventPublisher(process.env.NOTIFICATIONS_URL)
+});
 const facade = new GatewayFacade({
   categoryClient: new HttpCategoryClient(process.env.CATALOG_URL ?? "http://localhost:3001"),
   ticketClient: new HttpTicketClient(process.env.ORDERS_URL ?? "http://localhost:3002"),
-  notificationClient: new HttpNotificationClient(process.env.NOTIFICATIONS_URL ?? "http://localhost:3003")
+  notificationClient: new HttpNotificationClient(process.env.NOTIFICATIONS_URL ?? "http://localhost:3003"),
+  fallbackCreateTicket
 });
 const port = Number(process.env.PORT ?? 3000);
 const publicDir = join(process.cwd(), "services", "gateway", "public");
