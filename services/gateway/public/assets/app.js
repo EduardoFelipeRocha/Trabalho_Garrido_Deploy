@@ -11,6 +11,15 @@ const api = {
       body: JSON.stringify(body)
     });
     return parseResponse(response);
+  },
+
+  async patch(path, body) {
+    const response = await fetch(path, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    return parseResponse(response);
   }
 };
 
@@ -49,17 +58,36 @@ elements.ticketForm.addEventListener("submit", async (event) => {
 
     elements.ticketForm.reset();
     setFeedback("Chamado criado e notificacao registrada.");
-    await loadDashboard();
+    await loadDashboard({ keepFeedback: true });
   } catch (error) {
     setFeedback(error.message, true);
   }
 });
 
 elements.refreshButton.addEventListener("click", loadDashboard);
+elements.ticketList.addEventListener("change", async (event) => {
+  if (event.target.dataset.action !== "priority") {
+    return;
+  }
+
+  await updateTicket(event.target.dataset.ticketId, {
+    priority: Number(event.target.value)
+  }, "Prioridade atualizada.");
+});
+
+elements.ticketList.addEventListener("click", async (event) => {
+  if (event.target.dataset.action !== "finish") {
+    return;
+  }
+
+  await updateTicket(event.target.dataset.ticketId, {
+    status: "DONE"
+  }, "Chamado finalizado.");
+});
 
 loadDashboard();
 
-async function loadDashboard() {
+async function loadDashboard({ keepFeedback = false } = {}) {
   const results = await Promise.allSettled([
     api.get("/categories"),
     api.get("/tickets"),
@@ -89,7 +117,10 @@ async function loadDashboard() {
 
   elements.apiStatus.textContent = "API online";
   elements.apiStatus.className = "status ok";
-  setFeedback("");
+
+  if (!keepFeedback) {
+    setFeedback("");
+  }
 }
 
 function renderCategories() {
@@ -114,6 +145,7 @@ function renderTickets() {
   elements.ticketList.innerHTML = state.tickets.map((ticket) => {
     const category = state.categories.find((item) => item.id === ticket.categoryId);
     const priorityClass = ticket.priority >= 5 ? "high" : ticket.priority >= 3 ? "medium" : "";
+    const isDone = ticket.status === "DONE";
 
     return `
       <article class="ticket">
@@ -128,6 +160,25 @@ function renderTickets() {
           <span class="chip">${escapeHtml(ticket.district)}</span>
           <span class="chip">${escapeHtml(ticket.status)}</span>
           <span class="chip">${formatDate(ticket.createdAt)}</span>
+        </div>
+        <div class="ticket-actions">
+          <label>
+            Prioridade
+            <select data-action="priority" data-ticket-id="${escapeHtml(ticket.id)}" ${isDone ? "disabled" : ""}>
+              ${[1, 2, 3, 4, 5].map((priority) => `
+                <option value="${priority}" ${priority === ticket.priority ? "selected" : ""}>${priority}</option>
+              `).join("")}
+            </select>
+          </label>
+          <button
+            class="secondary"
+            type="button"
+            data-action="finish"
+            data-ticket-id="${escapeHtml(ticket.id)}"
+            ${isDone ? "disabled" : ""}
+          >
+            ${isDone ? "Finalizado" : "Finalizar"}
+          </button>
         </div>
       </article>
     `;
@@ -161,6 +212,18 @@ function renderMetrics() {
 function setFeedback(message, isError = false) {
   elements.formFeedback.textContent = message;
   elements.formFeedback.className = isError ? "feedback error" : "feedback";
+}
+
+async function updateTicket(ticketId, patch, successMessage) {
+  setFeedback("Atualizando chamado...");
+
+  try {
+    await api.patch(`/tickets/${ticketId}`, patch);
+    setFeedback(successMessage);
+    await loadDashboard({ keepFeedback: true });
+  } catch (error) {
+    setFeedback(error.message, true);
+  }
 }
 
 async function parseResponse(response) {

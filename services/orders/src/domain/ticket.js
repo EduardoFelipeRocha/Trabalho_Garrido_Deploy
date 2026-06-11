@@ -21,4 +21,20 @@ export class Ticket {
     this.status = status ?? "OPEN";
     this.createdAt = createdAt ?? new Date().toISOString();
   }
+
+  changePriority(priority) {
+    if (!Number.isInteger(priority) || priority < 1 || priority > 5) {
+      throw new Error("Priority must be an integer from 1 to 5.");
+    }
+
+    this.priority = priority;
+  }
+
+  finish() {
+    if (this.status === "DONE") {
+      return;
+    }
+
+    this.status = "DONE";
+  }
 }

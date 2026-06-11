@@ -26,11 +26,20 @@ describe("GatewayFacade", () => {
           throw new Error("Fallback should not be called.");
         }
       },
+      fallbackUpdateTicket: {
+        execute: async () => {
+          throw new Error("Fallback should not be called.");
+        }
+      },
       fallbackListTickets: {
         execute: async () => []
       },
       fallbackListNotifications: {
         execute: async () => []
+      },
+      notificationRecorder: {
+        recordCreated: async () => {},
+        recordUpdated: async () => {}
       }
     });
 
@@ -61,11 +70,20 @@ describe("GatewayFacade", () => {
       fallbackCreateTicket: {
         execute: async (input) => ({ id: "fallback-ticket", ...input })
       },
+      fallbackUpdateTicket: {
+        execute: async () => {
+          throw new Error("Fallback should not be called.");
+        }
+      },
       fallbackListTickets: {
         execute: async () => []
       },
       fallbackListNotifications: {
         execute: async () => []
+      },
+      notificationRecorder: {
+        recordCreated: async () => {},
+        recordUpdated: async () => {}
       }
     });
 
@@ -97,15 +115,65 @@ describe("GatewayFacade", () => {
       fallbackCreateTicket: {
         execute: async (input) => ({ id: "fallback-ticket", ...input })
       },
+      fallbackUpdateTicket: {
+        execute: async () => {
+          throw new Error("Fallback should not be called.");
+        }
+      },
       fallbackListTickets: {
         execute: async () => [{ id: "ticket-1" }]
       },
       fallbackListNotifications: {
         execute: async () => []
+      },
+      notificationRecorder: {
+        recordCreated: async () => {},
+        recordUpdated: async () => {}
       }
     });
 
     assert.deepEqual(await facade.listTickets(), [{ id: "ticket-1" }]);
     assert.deepEqual(await facade.listNotifications(), []);
+  });
+
+  it("updates tickets and records a notification", async () => {
+    const notifications = [];
+    const facade = new GatewayFacade({
+      categoryClient: {
+        getById: async (categoryId) => ({ id: categoryId, baseSeverity: 4 })
+      },
+      ticketClient: {
+        update: async (ticketId, input) => ({ id: ticketId, ...input })
+      },
+      notificationClient: {
+        findAll: async () => []
+      },
+      fallbackCreateTicket: {
+        execute: async () => {
+          throw new Error("Fallback should not be called.");
+        }
+      },
+      fallbackUpdateTicket: {
+        execute: async () => {
+          throw new Error("Fallback should not be called.");
+        }
+      },
+      fallbackListTickets: {
+        execute: async () => []
+      },
+      fallbackListNotifications: {
+        execute: async () => []
+      },
+      notificationRecorder: {
+        recordCreated: async () => {},
+        recordUpdated: async (ticket) => notifications.push(ticket)
+      }
+    });
+
+    const ticket = await facade.updateTicket("ticket-1", { priority: 2 });
+
+    assert.equal(ticket.id, "ticket-1");
+    assert.equal(ticket.priority, 2);
+    assert.deepEqual(notifications, [ticket]);
   });
 });

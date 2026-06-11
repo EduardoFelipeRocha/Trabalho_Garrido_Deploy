@@ -4,15 +4,19 @@ export class GatewayFacade {
     ticketClient,
     notificationClient,
     fallbackCreateTicket,
+    fallbackUpdateTicket,
     fallbackListTickets,
-    fallbackListNotifications
+    fallbackListNotifications,
+    notificationRecorder
   }) {
     this.categoryClient = categoryClient;
     this.ticketClient = ticketClient;
     this.notificationClient = notificationClient;
     this.fallbackCreateTicket = fallbackCreateTicket;
+    this.fallbackUpdateTicket = fallbackUpdateTicket;
     this.fallbackListTickets = fallbackListTickets;
     this.fallbackListNotifications = fallbackListNotifications;
+    this.notificationRecorder = notificationRecorder;
   }
 
   async createTicket(input) {
@@ -26,9 +30,25 @@ export class GatewayFacade {
     };
 
     try {
-      return await this.ticketClient.create(payload);
+      const ticket = await this.ticketClient.create(payload);
+      await this.notificationRecorder.recordCreated(ticket, "orders");
+      return ticket;
     } catch {
-      return this.fallbackCreateTicket.execute(payload);
+      const ticket = await this.fallbackCreateTicket.execute(payload);
+      await this.notificationRecorder.recordCreated(ticket, "gateway");
+      return ticket;
+    }
+  }
+
+  async updateTicket(ticketId, input) {
+    try {
+      const ticket = await this.ticketClient.update(ticketId, input);
+      await this.notificationRecorder.recordUpdated(ticket, "orders");
+      return ticket;
+    } catch {
+      const ticket = await this.fallbackUpdateTicket.execute(ticketId, input);
+      await this.notificationRecorder.recordUpdated(ticket, "gateway");
+      return ticket;
     }
   }
 

@@ -13,4 +13,17 @@ export class NotificationFactory {
       message: `Chamado ${ticket.id} recebido com prioridade ${ticket.priority}.`
     });
   }
+
+  fromTicketUpdated(ticket) {
+    const action = ticket.status === "DONE"
+      ? "finalizado"
+      : `atualizado para prioridade ${ticket.priority}`;
+
+    return new Notification({
+      id: this.idGenerator.nextId(),
+      type: "EMAIL",
+      recipient: ticket.citizenEmail,
+      message: `Chamado ${ticket.id} ${action}.`
+    });
+  }
 }

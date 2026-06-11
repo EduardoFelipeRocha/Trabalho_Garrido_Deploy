@@ -149,6 +149,12 @@ button:hover {
   background: var(--accent-dark);
 }
 
+button:disabled,
+select:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
 button.secondary {
   border: 1px solid var(--line);
   background: #ffffff;
@@ -238,6 +244,23 @@ button.secondary:hover {
   gap: 8px;
 }
 
+.ticket-actions {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) max-content;
+  gap: 10px;
+  align-items: end;
+  margin-top: 4px;
+}
+
+.ticket-actions select {
+  padding: 9px 10px;
+}
+
+.ticket-actions button {
+  min-height: 39px;
+  padding: 9px 12px;
+}
+
 .chip {
   border-radius: 999px;
   background: #e6f3f1;
@@ -283,8 +306,10 @@ button.secondary:hover {
   }
 
   .section-heading,
-  .ticket-header {
+  .ticket-header,
+  .ticket-actions {
     align-items: stretch;
+    grid-template-columns: 1fr;
     flex-direction: column;
   }
 }

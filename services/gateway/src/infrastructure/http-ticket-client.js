@@ -16,6 +16,15 @@ export class HttpTicketClient {
     });
     return parseResponse(response);
   }
+
+  async update(ticketId, input) {
+    const response = await fetch(`${this.baseUrl}/tickets/${ticketId}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input)
+    });
+    return parseResponse(response);
+  }
 }
 
 function normalizeBaseUrl(baseUrl) {

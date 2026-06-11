@@ -18,9 +18,21 @@ export class SupabaseTicketRepository {
     });
   }
 
+  async update(ticket) {
+    await this.supabaseClient.updateById("tickets", ticket.id, {
+      priority: ticket.priority,
+      status: ticket.status
+    });
+  }
+
   async findAll() {
     const rows = await this.supabaseClient.findAll("tickets");
     return rows.map(toTicket);
+  }
+
+  async findById(ticketId) {
+    const row = await this.supabaseClient.findById("tickets", ticketId);
+    return row ? toTicket(row) : null;
   }
 }
 

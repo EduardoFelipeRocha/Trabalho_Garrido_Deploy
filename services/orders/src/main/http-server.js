@@ -1,6 +1,7 @@
 import http from "node:http";
 import { CreateTicketUseCase } from "../application/create-ticket-use-case.js";
 import { ListTicketsUseCase } from "../application/list-tickets-use-case.js";
+import { UpdateTicketUseCase } from "../application/update-ticket-use-case.js";
 import { SeverityPriorityStrategy } from "../domain/severity-priority-strategy.js";
 import { TicketFactory } from "../domain/ticket-factory.js";
 import { HttpEventPublisher } from "../infrastructure/http-event-publisher.js";
@@ -23,6 +24,10 @@ const createTicket = new CreateTicketUseCase({
   eventPublisher: new HttpEventPublisher(process.env.NOTIFICATIONS_URL)
 });
 const listTickets = new ListTicketsUseCase(repository);
+const updateTicket = new UpdateTicketUseCase({
+  ticketRepository: repository,
+  eventPublisher: new HttpEventPublisher(process.env.NOTIFICATIONS_URL)
+});
 const port = Number(process.env.PORT ?? 3002);
 
 function readBody(request) {
@@ -43,14 +48,22 @@ function sendJson(response, statusCode, body) {
 
 const server = http.createServer(async (request, response) => {
   try {
-    if (request.method === "GET" && request.url === "/tickets") {
+    const url = new URL(request.url, `http://${request.headers.host}`);
+
+    if (request.method === "GET" && url.pathname === "/tickets") {
       sendJson(response, 200, await listTickets.execute());
       return;
     }
 
-    if (request.method === "POST" && request.url === "/tickets") {
+    if (request.method === "POST" && url.pathname === "/tickets") {
       const body = await readBody(request);
       sendJson(response, 201, await createTicket.execute(body));
+      return;
+    }
+
+    const ticketMatch = url.pathname.match(/^\/tickets\/([^/]+)$/);
+    if (request.method === "PATCH" && ticketMatch) {
+      sendJson(response, 200, await updateTicket.execute(ticketMatch[1], await readBody(request)));
       return;
     }
 

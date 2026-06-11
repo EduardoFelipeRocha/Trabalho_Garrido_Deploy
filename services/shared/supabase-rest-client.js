@@ -29,6 +29,16 @@ export class SupabaseRestClient {
     return rows[0];
   }
 
+  async updateById(table, id, patch) {
+    const response = await this.request(`${table}?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(patch)
+    });
+    const rows = await response.json();
+    return rows[0];
+  }
+
   async request(path, options = {}) {
     const response = await fetch(`${this.url}/rest/v1/${path}`, {
       ...options,

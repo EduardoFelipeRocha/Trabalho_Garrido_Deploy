@@ -33,6 +33,7 @@ Fluxo principal:
 3. O `gateway` envia os dados completos para `orders`.
 4. `orders` calcula a prioridade, salva o chamado e publica o evento `ticket.created`.
 5. `notifications` recebe o evento e salva a notificacao.
+6. Pelo painel web, o usuario pode alterar a prioridade ou finalizar o chamado.
 
 ## Arquitetura Limpa
 
@@ -50,6 +51,7 @@ Exemplo no servico `orders`:
 - `domain/ticket.js`: entidade `Ticket` e validacoes principais.
 - `domain/severity-priority-strategy.js`: regra de calculo de prioridade.
 - `application/create-ticket-use-case.js`: caso de uso para criar chamado.
+- `application/update-ticket-use-case.js`: caso de uso para alterar prioridade e finalizar chamado.
 - `infrastructure/supabase-ticket-repository.js`: persistencia em Supabase/Postgres.
 - `main/http-server.js`: entrada HTTP.
 
@@ -102,6 +104,8 @@ Tabelas criadas:
 Para teste rapido, se `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` nao forem configuradas, os servicos usam repositorios em memoria.
 
 O gateway tambem possui categorias padrao como fallback para manter a interface utilizavel caso o servico `catalog` esteja temporariamente indisponivel no deploy. Se `orders` estiver indisponivel, o gateway tenta criar o chamado diretamente usando a mesma regra de negocio e o mesmo Supabase/Postgres.
+
+As notificacoes sao registradas quando um chamado e criado, quando a prioridade muda e quando o chamado e finalizado.
 
 ## Executando localmente
 
@@ -168,6 +172,22 @@ Invoke-RestMethod `
   -Body '{"categoryId":"pothole","description":"Buraco com risco de acidente perto da escola","citizenEmail":"ana@example.com","district":"Centro"}'
 ```
 
+Atualizar prioridade ou finalizar:
+
+```powershell
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/tickets/ID_DO_CHAMADO" `
+  -Method Patch `
+  -ContentType "application/json" `
+  -Body '{"priority":2}'
+
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/tickets/ID_DO_CHAMADO" `
+  -Method Patch `
+  -ContentType "application/json" `
+  -Body '{"status":"DONE"}'
+```
+
 ## TDD
 
 Os testes unitarios ficam em:
@@ -181,6 +201,7 @@ Eles cobrem:
 - criacao de chamado valido;
 - rejeicao de e-mail invalido;
 - calculo de prioridade;
+- alteracao de prioridade e finalizacao de chamado;
 - publicacao do evento `ticket.created`;
 - orquestracao do `GatewayFacade`.
 
