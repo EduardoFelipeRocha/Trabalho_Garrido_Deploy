@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cidade Cuida</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Painel municipal</p>
+        <h1>Cidade Cuida</h1>
+      </div>
+      <div class="status" id="apiStatus">Verificando API</div>
+    </header>
+
+    <main class="layout">
+      <section class="panel form-panel" aria-labelledby="formTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Novo chamado</p>
+            <h2 id="formTitle">Registrar problema urbano</h2>
+          </div>
+        </div>
+
+        <form id="ticketForm">
+          <label>
+            Categoria
+            <select id="categoryId" name="categoryId" required></select>
+          </label>
+
+          <label>
+            Bairro
+            <input id="district" name="district" required placeholder="Ex.: Centro">
+          </label>
+
+          <label>
+            E-mail do cidadao
+            <input id="citizenEmail" name="citizenEmail" type="email" required placeholder="ana@example.com">
+          </label>
+
+          <label>
+            Descricao
+            <textarea id="description" name="description" rows="5" required placeholder="Descreva o problema e informe pontos de referencia"></textarea>
+          </label>
+
+          <button type="submit">Criar chamado</button>
+        </form>
+
+        <p class="feedback" id="formFeedback" role="status"></p>
+      </section>
+
+      <section class="panel metrics-panel" aria-label="Indicadores">
+        <div class="metric">
+          <span id="ticketCount">0</span>
+          <p>chamados</p>
+        </div>
+        <div class="metric">
+          <span id="criticalCount">0</span>
+          <p>prioridade alta</p>
+        </div>
+        <div class="metric">
+          <span id="notificationCount">0</span>
+          <p>notificacoes</p>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="ticketsTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Fila de atendimento</p>
+            <h2 id="ticketsTitle">Chamados registrados</h2>
+          </div>
+          <button class="secondary" id="refreshButton" type="button">Atualizar</button>
+        </div>
+        <div class="list" id="ticketList"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="notificationsTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Eventos</p>
+            <h2 id="notificationsTitle">Notificacoes</h2>
+          </div>
+        </div>
+        <div class="list compact" id="notificationList"></div>
+      </section>
+    </main>
+
+    <script src="/assets/app.js"></script>
+  </body>
+</html>

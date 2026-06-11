@@ -36,8 +36,10 @@ services:
     environment:
       CATALOG_URL: http://catalog:3001
       ORDERS_URL: http://orders:3002
+      NOTIFICATIONS_URL: http://notifications:3003
     ports:
       - "3000:3000"
     depends_on:
       - catalog
       - orders
+      - notifications

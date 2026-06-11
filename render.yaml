@@ -50,3 +50,8 @@ services:
           type: web
           name: cidade-cuida-orders
           property: hostport
+      - key: NOTIFICATIONS_URL
+        fromService:
+          type: web
+          name: cidade-cuida-notifications
+          property: hostport

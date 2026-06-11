@@ -1,7 +1,8 @@
 export class GatewayFacade {
-  constructor({ categoryClient, ticketClient }) {
+  constructor({ categoryClient, ticketClient, notificationClient }) {
     this.categoryClient = categoryClient;
     this.ticketClient = ticketClient;
+    this.notificationClient = notificationClient;
   }
 
   async createTicket(input) {
@@ -21,5 +22,9 @@ export class GatewayFacade {
 
   async listTickets() {
     return this.ticketClient.findAll();
+  }
+
+  async listNotifications() {
+    return this.notificationClient.findAll();
   }
 }

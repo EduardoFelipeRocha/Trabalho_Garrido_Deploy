@@ -17,6 +17,9 @@ describe("GatewayFacade", () => {
           calls.push(`ticket:${input.category.id}`);
           return { id: "ticket-1", ...input };
         }
+      },
+      notificationClient: {
+        findAll: async () => []
       }
     });
 

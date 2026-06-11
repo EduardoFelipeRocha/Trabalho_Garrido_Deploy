@@ -24,6 +24,8 @@ A proposta deste sistema e centralizar o registro dos chamados e calcular uma pr
 | `notifications` | `3003` | Recebe evento de chamado criado e registra uma notificacao. |
 | `gateway` | `3000` | API de entrada; orquestra catalogo e chamados para o cliente externo. |
 
+O `gateway` tambem entrega o frontend web em `/`, permitindo registrar chamados e acompanhar os dados pelo navegador.
+
 Fluxo principal:
 
 1. O cliente envia `POST /tickets` para o `gateway`.
@@ -140,12 +142,14 @@ Terminal 4:
 ```powershell
 $env:CATALOG_URL="http://localhost:3001"
 $env:ORDERS_URL="http://localhost:3002"
+$env:NOTIFICATIONS_URL="http://localhost:3003"
 npm run start:gateway
 ```
 
 Teste:
 
 ```powershell
+Start-Process http://localhost:3000
 Invoke-RestMethod http://localhost:3000/categories
 ```
 
