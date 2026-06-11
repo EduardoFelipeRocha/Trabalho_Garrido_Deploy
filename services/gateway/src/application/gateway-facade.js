@@ -1,9 +1,18 @@
 export class GatewayFacade {
-  constructor({ categoryClient, ticketClient, notificationClient, fallbackCreateTicket }) {
+  constructor({
+    categoryClient,
+    ticketClient,
+    notificationClient,
+    fallbackCreateTicket,
+    fallbackListTickets,
+    fallbackListNotifications
+  }) {
     this.categoryClient = categoryClient;
     this.ticketClient = ticketClient;
     this.notificationClient = notificationClient;
     this.fallbackCreateTicket = fallbackCreateTicket;
+    this.fallbackListTickets = fallbackListTickets;
+    this.fallbackListNotifications = fallbackListNotifications;
   }
 
   async createTicket(input) {
@@ -28,10 +37,18 @@ export class GatewayFacade {
   }
 
   async listTickets() {
-    return this.ticketClient.findAll();
+    try {
+      return await this.ticketClient.findAll();
+    } catch {
+      return this.fallbackListTickets.execute();
+    }
   }
 
   async listNotifications() {
-    return this.notificationClient.findAll();
+    try {
+      return await this.notificationClient.findAll();
+    } catch {
+      return this.fallbackListNotifications.execute();
+    }
   }
 }

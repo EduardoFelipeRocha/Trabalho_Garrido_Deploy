@@ -2,6 +2,7 @@ import http from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { CreateTicketUseCase } from "../../../orders/src/application/create-ticket-use-case.js";
+import { ListTicketsUseCase } from "../../../orders/src/application/list-tickets-use-case.js";
 import { SeverityPriorityStrategy } from "../../../orders/src/domain/severity-priority-strategy.js";
 import { TicketFactory } from "../../../orders/src/domain/ticket-factory.js";
 import { HttpEventPublisher } from "../../../orders/src/infrastructure/http-event-publisher.js";
@@ -27,11 +28,19 @@ const fallbackCreateTicket = new CreateTicketUseCase({
   priorityStrategy: new SeverityPriorityStrategy(),
   eventPublisher: new HttpEventPublisher(process.env.NOTIFICATIONS_URL)
 });
+const fallbackListTickets = new ListTicketsUseCase(fallbackTicketRepository);
+const fallbackListNotifications = {
+  async execute() {
+    return [];
+  }
+};
 const facade = new GatewayFacade({
   categoryClient: new HttpCategoryClient(process.env.CATALOG_URL ?? "http://localhost:3001"),
   ticketClient: new HttpTicketClient(process.env.ORDERS_URL ?? "http://localhost:3002"),
   notificationClient: new HttpNotificationClient(process.env.NOTIFICATIONS_URL ?? "http://localhost:3003"),
-  fallbackCreateTicket
+  fallbackCreateTicket,
+  fallbackListTickets,
+  fallbackListNotifications
 });
 const port = Number(process.env.PORT ?? 3000);
 const publicDir = join(process.cwd(), "services", "gateway", "public");
