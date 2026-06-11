@@ -8,11 +8,15 @@ export class HttpEventPublisher {
       return;
     }
 
-    await fetch(`${this.baseUrl}/events`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ type, payload })
-    });
+    try {
+      await fetch(`${this.baseUrl}/events`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ type, payload })
+      });
+    } catch {
+      return;
+    }
   }
 }
 
