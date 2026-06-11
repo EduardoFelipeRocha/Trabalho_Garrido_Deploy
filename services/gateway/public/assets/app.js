@@ -60,29 +60,36 @@ elements.refreshButton.addEventListener("click", loadDashboard);
 loadDashboard();
 
 async function loadDashboard() {
-  try {
-    elements.apiStatus.textContent = "API online";
-    elements.apiStatus.className = "status ok";
+  const results = await Promise.allSettled([
+    api.get("/categories"),
+    api.get("/tickets"),
+    api.get("/notifications")
+  ]);
 
-    const [categories, tickets, notifications] = await Promise.all([
-      api.get("/categories"),
-      api.get("/tickets"),
-      api.get("/notifications")
-    ]);
+  const [categoriesResult, ticketsResult, notificationsResult] = results;
+  const errors = results
+    .filter((result) => result.status === "rejected")
+    .map((result) => result.reason.message);
 
-    state.categories = categories;
-    state.tickets = tickets;
-    state.notifications = notifications;
+  state.categories = categoriesResult.status === "fulfilled" ? categoriesResult.value : [];
+  state.tickets = ticketsResult.status === "fulfilled" ? ticketsResult.value : [];
+  state.notifications = notificationsResult.status === "fulfilled" ? notificationsResult.value : [];
 
-    renderCategories();
-    renderTickets();
-    renderNotifications();
-    renderMetrics();
-  } catch (error) {
-    elements.apiStatus.textContent = "API com erro";
+  renderCategories();
+  renderTickets();
+  renderNotifications();
+  renderMetrics();
+
+  if (errors.length > 0) {
+    elements.apiStatus.textContent = "API parcial";
     elements.apiStatus.className = "status error";
-    setFeedback(error.message, true);
+    setFeedback(`${errors[0]} Abra /diagnostics para detalhes.`, true);
+    return;
   }
+
+  elements.apiStatus.textContent = "API online";
+  elements.apiStatus.className = "status ok";
+  setFeedback("");
 }
 
 function renderCategories() {

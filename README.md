@@ -151,6 +151,7 @@ Teste:
 ```powershell
 Start-Process http://localhost:3000
 Invoke-RestMethod http://localhost:3000/categories
+Invoke-RestMethod http://localhost:3000/diagnostics
 ```
 
 Criar chamado:
@@ -246,6 +247,14 @@ Mais detalhes em:
 ```text
 docs/DEPLOY.md
 ```
+
+Se o frontend abrir com "API parcial" ou "API com erro", acesse:
+
+```text
+https://URL-DO-GATEWAY/diagnostics
+```
+
+Essa rota mostra se o erro esta no `catalog`, `orders` ou `notifications`.
 
 ## Justificativa tecnica
 

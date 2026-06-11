@@ -30,6 +30,28 @@ function sendJson(response, statusCode, body) {
   response.end(JSON.stringify(body));
 }
 
+async function checkUpstream(name, url) {
+  try {
+    const response = await fetch(url);
+    const body = await response.text();
+
+    return {
+      name,
+      url,
+      ok: response.ok,
+      status: response.status,
+      sample: body.slice(0, 180)
+    };
+  } catch (error) {
+    return {
+      name,
+      url,
+      ok: false,
+      error: error.message
+    };
+  }
+}
+
 async function sendStatic(response, pathname) {
   const filePath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
   const safePath = join(publicDir, filePath);
@@ -62,6 +84,20 @@ const server = http.createServer(async (request, response) => {
 
     if (request.method === "GET" && request.url === "/health") {
       sendJson(response, 200, { status: "ok" });
+      return;
+    }
+
+    if (request.method === "GET" && request.url === "/diagnostics") {
+      const diagnostics = await Promise.all([
+        checkUpstream("catalog", `${facade.categoryClient.baseUrl}/categories`),
+        checkUpstream("orders", `${facade.ticketClient.baseUrl}/tickets`),
+        checkUpstream("notifications", `${facade.notificationClient.baseUrl}/notifications`)
+      ]);
+
+      sendJson(response, 200, {
+        status: diagnostics.every((item) => item.ok) ? "ok" : "degraded",
+        services: diagnostics
+      });
       return;
     }
 

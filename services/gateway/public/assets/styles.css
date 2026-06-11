@@ -126,6 +126,10 @@ textarea {
   font: inherit;
 }
 
+select:empty {
+  min-height: 44px;
+}
+
 textarea {
   resize: vertical;
 }
