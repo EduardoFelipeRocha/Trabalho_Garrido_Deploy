@@ -27,7 +27,8 @@ insert into categories (id, name, base_severity) values
   ('pothole', 'Buraco em via', 4),
   ('lighting', 'Iluminacao publica', 3),
   ('waste', 'Descarte irregular', 2),
-  ('flood', 'Alagamento', 5)
+  ('flood', 'Alagamento', 5),
+  ('other', 'Outros / Avulso', 2)
 on conflict (id) do update set
   name = excluded.name,
   base_severity = excluded.base_severity;

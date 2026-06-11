@@ -8,6 +8,7 @@ Exemplos de chamados:
 - falta de iluminacao;
 - descarte irregular de lixo;
 - alagamento.
+- outros casos avulsos descritos pelo cidadao.
 
 ## Problema
 
@@ -102,6 +103,7 @@ Tabelas criadas:
 - `notifications`
 
 Para teste rapido, se `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` nao forem configuradas, os servicos usam repositorios em memoria.
+Se uma nova categoria for adicionada ao SQL, execute novamente `docs/supabase-schema.sql` no Supabase para atualizar a tabela `categories`.
 
 O gateway tambem possui categorias padrao como fallback para manter a interface utilizavel caso o servico `catalog` esteja temporariamente indisponivel no deploy. Se `orders` estiver indisponivel, o gateway tenta criar o chamado diretamente usando a mesma regra de negocio e o mesmo Supabase/Postgres.
 

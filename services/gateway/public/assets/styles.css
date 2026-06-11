@@ -77,6 +77,7 @@ h2 {
 .layout {
   display: grid;
   grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+  align-items: start;
   gap: 18px;
   width: min(1180px, calc(100% - 32px));
   margin: 22px auto 40px;
@@ -91,7 +92,8 @@ h2 {
 }
 
 .form-panel {
-  grid-row: span 3;
+  position: sticky;
+  top: 18px;
 }
 
 .section-heading {
@@ -113,6 +115,13 @@ label {
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
+}
+
+.field-hint {
+  margin-top: -8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 input,
@@ -297,6 +306,7 @@ button.secondary:hover {
 
   .form-panel {
     grid-row: auto;
+    position: static;
   }
 }
 

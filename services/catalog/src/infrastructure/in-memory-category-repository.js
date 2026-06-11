@@ -6,7 +6,8 @@ export class InMemoryCategoryRepository {
       new Category({ id: "pothole", name: "Buraco em via", baseSeverity: 4 }),
       new Category({ id: "lighting", name: "Iluminacao publica", baseSeverity: 3 }),
       new Category({ id: "waste", name: "Descarte irregular", baseSeverity: 2 }),
-      new Category({ id: "flood", name: "Alagamento", baseSeverity: 5 })
+      new Category({ id: "flood", name: "Alagamento", baseSeverity: 5 }),
+      new Category({ id: "other", name: "Outros / Avulso", baseSeverity: 2 })
     ];
   }
 

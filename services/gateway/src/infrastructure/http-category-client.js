@@ -6,7 +6,7 @@ export class HttpCategoryClient {
   async findAll() {
     try {
       const response = await fetch(`${this.baseUrl}/categories`);
-      return parseResponse(response);
+      return mergeDefaultCategories(await parseResponse(response));
     } catch {
       return defaultCategories();
     }
@@ -47,6 +47,14 @@ function defaultCategories() {
     { id: "pothole", name: "Buraco em via", baseSeverity: 4 },
     { id: "lighting", name: "Iluminacao publica", baseSeverity: 3 },
     { id: "waste", name: "Descarte irregular", baseSeverity: 2 },
-    { id: "flood", name: "Alagamento", baseSeverity: 5 }
+    { id: "flood", name: "Alagamento", baseSeverity: 5 },
+    { id: "other", name: "Outros / Avulso", baseSeverity: 2 }
   ];
+}
+
+function mergeDefaultCategories(categories) {
+  const categoryIds = new Set(categories.map((category) => category.id));
+  const missingCategories = defaultCategories().filter((category) => !categoryIds.has(category.id));
+
+  return [...categories, ...missingCategories];
 }
