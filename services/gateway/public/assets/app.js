@@ -93,6 +93,13 @@ async function loadDashboard() {
 }
 
 function renderCategories() {
+  if (state.categories.length === 0) {
+    elements.categoryId.innerHTML = '<option value="">Categorias indisponiveis</option>';
+    elements.categoryId.disabled = true;
+    return;
+  }
+
+  elements.categoryId.disabled = false;
   elements.categoryId.innerHTML = state.categories
     .map((category) => `<option value="${category.id}">${category.name}</option>`)
     .join("");

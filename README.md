@@ -101,6 +101,8 @@ Tabelas criadas:
 
 Para teste rapido, se `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` nao forem configuradas, os servicos usam repositorios em memoria.
 
+O gateway tambem possui categorias padrao como fallback para manter a interface utilizavel caso o servico `catalog` esteja temporariamente indisponivel no deploy.
+
 ## Executando localmente
 
 Rode os testes:
