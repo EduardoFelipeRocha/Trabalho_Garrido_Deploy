@@ -1,7 +1,7 @@
 services:
   - type: web
     name: cidade-cuida-catalog
-    env: docker
+    runtime: docker
     plan: free
     dockerfilePath: ./services/catalog/Dockerfile
     envVars:
@@ -11,7 +11,7 @@ services:
         sync: false
   - type: web
     name: cidade-cuida-notifications
-    env: docker
+    runtime: docker
     plan: free
     dockerfilePath: ./services/notifications/Dockerfile
     envVars:
@@ -21,7 +21,7 @@ services:
         sync: false
   - type: web
     name: cidade-cuida-orders
-    env: docker
+    runtime: docker
     plan: free
     dockerfilePath: ./services/orders/Dockerfile
     envVars:
@@ -36,7 +36,7 @@ services:
           property: hostport
   - type: web
     name: cidade-cuida-gateway
-    env: docker
+    runtime: docker
     plan: free
     dockerfilePath: ./services/gateway/Dockerfile
     envVars:
