@@ -1,0 +1,43 @@
+services:
+  catalog:
+    build:
+      context: .
+      dockerfile: services/catalog/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+  notifications:
+    build:
+      context: .
+      dockerfile: services/notifications/Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+  orders:
+    build:
+      context: .
+      dockerfile: services/orders/Dockerfile
+    environment:
+      NOTIFICATIONS_URL: http://notifications:3003
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+    ports:
+      - "3002:3002"
+    depends_on:
+      - notifications
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile
+    environment:
+      CATALOG_URL: http://catalog:3001
+      ORDERS_URL: http://orders:3002
+    ports:
+      - "3000:3000"
+    depends_on:
+      - catalog
+      - orders

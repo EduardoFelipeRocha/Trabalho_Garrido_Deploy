@@ -1,0 +1,17 @@
+{
+  "name": "cidade-cuida",
+  "version": "1.0.0",
+  "description": "Plataforma em microsservicos para triagem de chamados urbanos.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/unit/*.test.js",
+    "bdd": "node tests/bdd/run-bdd.js",
+    "start:catalog": "node services/catalog/src/main/http-server.js",
+    "start:orders": "node services/orders/src/main/http-server.js",
+    "start:notifications": "node services/notifications/src/main/http-server.js",
+    "start:gateway": "node services/gateway/src/main/http-server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

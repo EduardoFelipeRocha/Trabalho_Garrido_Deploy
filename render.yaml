@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: cidade-cuida-catalog
+    env: docker
+    plan: free
+    dockerfilePath: ./services/catalog/Dockerfile
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+  - type: web
+    name: cidade-cuida-notifications
+    env: docker
+    plan: free
+    dockerfilePath: ./services/notifications/Dockerfile
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+  - type: web
+    name: cidade-cuida-orders
+    env: docker
+    plan: free
+    dockerfilePath: ./services/orders/Dockerfile
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: NOTIFICATIONS_URL
+        fromService:
+          type: web
+          name: cidade-cuida-notifications
+          property: hostport
+  - type: web
+    name: cidade-cuida-gateway
+    env: docker
+    plan: free
+    dockerfilePath: ./services/gateway/Dockerfile
+    envVars:
+      - key: CATALOG_URL
+        fromService:
+          type: web
+          name: cidade-cuida-catalog
+          property: hostport
+      - key: ORDERS_URL
+        fromService:
+          type: web
+          name: cidade-cuida-orders
+          property: hostport
